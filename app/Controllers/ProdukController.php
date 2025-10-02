@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
@@ -9,7 +8,6 @@ class ProdukController extends ResourceController
 {
     protected $format = 'json';
 
-    // Menampilkan semua produk
     public function index()
     {
         $model = new MProduk();
@@ -17,23 +15,22 @@ class ProdukController extends ResourceController
         return $this->respond($produk);
     }
 
-    // Menambahkan produk baru
+    // Membuat fungsi create produk
     public function create()
     {
         $data = [
             'kode_produk' => $this->request->getVar('kode_produk'),
             'nama_produk' => $this->request->getVar('nama_produk'),
-            'harga' => $this->request->getVar('harga')
+            'harga'       => $this->request->getVar('harga')
         ];
 
         $model = new MProduk();
         $model->insert($data);
         $produk = $model->find($model->getInsertID());
-
         return $this->respondCreated($produk);
     }
 
-    // Menampilkan list produk
+    // Membuat fungsi list produk
     public function list()
     {
         $model = new MProduk();
@@ -41,16 +38,16 @@ class ProdukController extends ResourceController
         return $this->respond($produk);
     }
 
-    // Membuat fungsi detail produk
+    // Membuat fungsi tampil produk
     public function detail($id)
     {
         $model = new MProduk();
         $produk = $model->find($id);
 
-        if ($produk) {
+        if ($produk != null) {
             return $this->respond($produk);
         } else {
-            return $this->failNotFound("Data Tidak Ditemukan");
+            return $this->fail("Data Tidak Ditemukan");
         }
     }
 
@@ -60,18 +57,12 @@ class ProdukController extends ResourceController
         $data = [
             'kode_produk' => $this->request->getVar('kode_produk'),
             'nama_produk' => $this->request->getVar('nama_produk'),
-            'harga' => $this->request->getVar('harga')
+            'harga'       => $this->request->getVar('harga')
         ];
 
         $model = new MProduk();
-
-        if (!$model->find($id)) {
-            return $this->failNotFound("Produk dengan ID $id tidak ditemukan");
-        }
-
         $model->update($id, $data);
         $produk = $model->find($id);
-
         return $this->respond($produk);
     }
 
@@ -79,12 +70,7 @@ class ProdukController extends ResourceController
     public function hapus($id)
     {
         $model = new MProduk();
-
-        if (!$model->find($id)) {
-            return $this->failNotFound("Produk dengan ID $id tidak ditemukan");
-        }
-
-        $model->delete($id);
-        return $this->respondDeleted(['id' => $id, 'status' => 'Deleted']);
+        $produk = $model->delete($id);
+        return $this->respondDeleted($produk);
     }
 }
